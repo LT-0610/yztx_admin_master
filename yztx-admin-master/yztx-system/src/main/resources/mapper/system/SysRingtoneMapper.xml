@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRingtoneMapper">
+    
+    <resultMap type="SysRingtone" id="SysRingtoneResult">
+        <result property="id"    column="id"    />
+        <result property="ringtoneName"    column="ringtone_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectSysRingtoneVo">
+        select id, ringtone_name, file_path, user_id from sys_ringtone
+    </sql>
+
+    <select id="selectSysRingtoneList" parameterType="SysRingtone" resultMap="SysRingtoneResult">
+        <include refid="selectSysRingtoneVo"/>
+        <where>  
+            <if test="ringtoneName != null  and ringtoneName != ''"> and ringtone_name like concat('%', #{ringtoneName}, '%')</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysRingtoneById" parameterType="Long" resultMap="SysRingtoneResult">
+        <include refid="selectSysRingtoneVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysRingtone" parameterType="SysRingtone">
+        insert into sys_ringtone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="ringtoneName != null">ringtone_name,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="ringtoneName != null">#{ringtoneName},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysRingtone" parameterType="SysRingtone">
+        update sys_ringtone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ringtoneName != null">ringtone_name = #{ringtoneName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysRingtoneById" parameterType="Long">
+        delete from sys_ringtone where id = #{id}
+    </delete>
+
+    <delete id="deleteSysRingtoneByUserId" parameterType="Long">
+        delete from sys_ringtone where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysRingtoneByUserIds" parameterType="String">
+        delete from sys_ringtone where user_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSysRingtoneByIds" parameterType="String">
+        delete from sys_ringtone where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

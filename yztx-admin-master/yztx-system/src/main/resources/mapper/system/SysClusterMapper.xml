@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysClusterMapper">
+    
+    <resultMap type="SysCluster" id="SysClusterResult">
+        <result property="id"    column="id"    />
+        <result property="clusterName"    column="cluster_name"    />
+        <result property="clusterResult"    column="cluster_result"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSysClusterVo">
+        select id, cluster_name, cluster_result, create_time from sys_cluster
+    </sql>
+
+    <select id="selectSysClusterList" parameterType="SysCluster" resultMap="SysClusterResult">
+        <include refid="selectSysClusterVo"/>
+        <where>  
+            <if test="clusterName != null  and clusterName != ''"> and cluster_name like concat('%', #{clusterName}, '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysClusterById" parameterType="Long" resultMap="SysClusterResult">
+        <include refid="selectSysClusterVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysCluster" parameterType="SysCluster" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_cluster
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clusterName != null">cluster_name,</if>
+            <if test="clusterResult != null">cluster_result,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clusterName != null">#{clusterName},</if>
+            <if test="clusterResult != null">#{clusterResult},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <delete id="deleteSysClusterById" parameterType="Long">
+        delete from sys_cluster where id = #{id}
+    </delete>
+
+    <delete id="deleteSysClusterByIds" parameterType="String">
+        delete from sys_cluster where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysVideoFavoriteMapper">
+    
+    <resultMap type="SysVideoFavorite" id="SysVideoFavoriteResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="videoId"    column="video_id"    />
+    </resultMap>
+
+    <sql id="selectSysVideoFavoriteVo">
+        select id, user_id, video_id from sys_video_favorite
+    </sql>
+    
+    <select id="selectSysVideoFavoriteByVideoId" parameterType="Long" resultMap="SysVideoFavoriteResult">
+        <include refid="selectSysVideoFavoriteVo"/>
+        where video_id = #{videoId}
+    </select>
+    <select id="selectSysVideoFavoriteByUserId" parameterType="Long" resultMap="SysVideoFavoriteResult">
+        <include refid="selectSysVideoFavoriteVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertSysVideoFavorite" parameterType="SysVideoFavorite" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_video_favorite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="videoId != null">video_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="videoId != null">#{videoId},</if>
+         </trim>
+    </insert>
+
+    <delete id="deleteSysVideoFavoriteById" parameterType="Long">
+        delete from sys_video_favorite where id = #{id}
+    </delete>
+</mapper>

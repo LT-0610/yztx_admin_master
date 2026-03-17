@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysDiagMapper">
+    
+    <resultMap type="SysDiag" id="SysDiagResult">
+        <result property="diagId"    column="diag_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="patientNumber"    column="patient_number"    />
+        <result property="diagContent"    column="diag_content"    />
+        <result property="diagTime"    column="diag_time"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectSysDiagVo">
+        select diag_id, patient_name, patient_number, diag_content, diag_time,user_id from sys_diag
+    </sql>
+
+    <select id="selectSysDiagList" parameterType="SysDiag" resultMap="SysDiagResult">
+        <include refid="selectSysDiagVo"/>
+        <where>  
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="patientNumber != null  and patientNumber != ''"> and patient_number = #{patientNumber}</if>
+            <if test="diagContent != null  and diagContent != ''"> and diag_content = #{diagContent}</if>
+            <if test="diagTime != null "> and diag_time = #{diagTime}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDiagByDiagId" parameterType="Long" resultMap="SysDiagResult">
+        <include refid="selectSysDiagVo"/>
+        where diag_id = #{diagId}
+    </select>
+    <select id="getAllSysDiag" resultMap="SysDiagResult">
+        select * from sys_diag
+    </select>
+
+    <insert id="insertSysDiag" parameterType="SysDiag" useGeneratedKeys="true" keyProperty="diagId">
+        insert into sys_diag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientName != null and patientName != ''">patient_name,</if>
+            <if test="patientNumber != null and patientNumber != ''">patient_number,</if>
+            <if test="diagContent != null and diagContent != ''">diag_content,</if>
+            <if test="diagTime != null">diag_time,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientName != null and patientName != ''">#{patientName},</if>
+            <if test="patientNumber != null and patientNumber != ''">#{patientNumber},</if>
+            <if test="diagContent != null and diagContent != ''">#{diagContent},</if>
+            <if test="diagTime != null">#{diagTime},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDiag" parameterType="SysDiag">
+        update sys_diag
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientName != null and patientName != ''">patient_name = #{patientName},</if>
+            <if test="patientNumber != null and patientNumber != ''">patient_number = #{patientNumber},</if>
+            <if test="diagContent != null and diagContent != ''">diag_content = #{diagContent},</if>
+            <if test="diagTime != null">diag_time = #{diagTime},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where diag_id = #{diagId}
+    </update>
+
+    <delete id="deleteSysDiagByDiagId" parameterType="Long">
+        delete from sys_diag where diag_id = #{diagId}
+    </delete>
+
+    <delete id="deleteSysDiagByDiagIds" parameterType="String">
+        delete from sys_diag where diag_id in 
+        <foreach item="diagId" collection="array" open="(" separator="," close=")">
+            #{diagId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCommentMapper">
+    
+    <resultMap type="SysComment" id="SysCommentResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="talkId"    column="talk_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="level"    column="level"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="rootId"    column="root_id"    />
+        <result property="isLike"    column="is_like"    />
+        <result property="likeCount"    column="like_count"    />
+        <result property="createTime"    column="create_time"    />
+        <collection  property="commentUser"   javaType="java.util.List"     resultMap="SysUserResult" />
+        <collection  property="replyUser"   javaType="java.util.List"     resultMap="SysReplyUserResult" />
+    </resultMap>
+
+    <resultMap type="SysUser" id="SysUserResult">
+        <result property="nickName"     column="nick_name"    />
+        <result property="avatar"       column="avatar"       />
+    </resultMap>
+
+    <resultMap type="SysUser" id="SysReplyUserResult">
+        <result property="nickName"     column="replyUserName"    />
+    </resultMap>
+
+
+    <!-- 根据条件查询评论列表，并关联查询用户信息 -->
+    <select id="selectCommentWithUser" resultMap="SysCommentResult">
+        SELECT
+            c.id,
+            c.content,
+            c.talk_id,
+            c.user_id,
+            c.level,
+            c.parent_id,
+            c.root_id,
+            c.is_like,
+            c.like_count,
+            c.create_time,
+            u1.nick_name,
+            u1.avatar,
+            u2.nick_name AS replyUserName
+        FROM
+            sys_comment c
+                LEFT JOIN sys_user u1 ON c.user_id = u1.user_id
+                LEFT JOIN sys_comment rc ON c.parent_id = rc.id
+                LEFT JOIN sys_user u2 ON rc.user_id = u2.user_id
+        WHERE
+            c.talk_id = #{talkId}
+    </select>
+
+
+
+    <sql id="selectSysCommentVo">
+        select id, content, talk_id, user_id, level, parent_id, root_id, is_like, like_count, create_time from sys_comment
+    </sql>
+
+
+
+    <select id="selectSysCommentList" parameterType="SysComment" resultMap="SysCommentResult">
+        <include refid="selectSysCommentVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+            <if test="talkId != null  and talkId != ''"> and talk_id = #{talkId}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="likeCount != null "> and like_count &gt;= #{likeCount}</if>
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+        </where>
+    </select>
+    <select id="selectSysCommentById" resultMap="SysCommentResult">
+        <include refid="selectSysCommentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysComment" parameterType="SysComment">
+        insert into sys_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="talkId != null">talk_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="level != null">level,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="rootId != null">root_id,</if>
+            <if test="isLike != null">is_like,</if>
+            <if test="likeCount != null">like_count,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="talkId != null">#{talkId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="level != null">#{level},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="rootId != null">#{rootId},</if>
+            <if test="isLike != null">#{isLike},</if>
+            <if test="likeCount != null">#{likeCount},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysComment" parameterType="SysComment">
+        update sys_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="talkId != null">talk_id = #{talkId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="rootId != null">root_id = #{rootId},</if>
+            <if test="isLike != null">is_like = #{isLike},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysCommentById" parameterType="String">
+        delete from sys_comment where id = #{id}
+    </delete>
+
+    <delete id="deleteSysCommentByIds" parameterType="String">
+        delete from sys_comment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSysCommentByRootId" parameterType="String">
+        delete from sys_comment where root_id = #{rootId}
+    </delete>
+</mapper>

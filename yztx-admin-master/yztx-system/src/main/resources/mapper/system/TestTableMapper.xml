@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TestTableMapper">
+    
+    <resultMap type="TestTable" id="TestTableResult">
+        <result property="id"    column="id"    />
+        <result property="age"    column="age"    />
+        <result property="gender"    column="gender"    />
+        <result property="region"    column="region"    />
+        <result property="work"    column="work"    />
+        <result property="isMakeMecicine"    column="isMakeMecicine"    />
+        <result property="nameWithValue"    column="nameWithValue"    />
+        <result property="trustFrequency"    column="trustFrequency"    />
+        <result property="istoTrust"    column="istoTrust"    />
+        <result property="isForget"    column="isForget"    />
+        <result property="buyMedicineFrequency"    column="buyMedicineFrequency"    />
+        <result property="medicineRegion"    column="medicineRegion"    />
+        <result property="reason"    column="reason"    />
+        <result property="focus"    column="focus"    />
+        <result property="isActive"    column="isActive"    />
+        <result property="channel"    column="channel"    />
+    </resultMap>
+
+    <sql id="selectTestTableVo">
+        select id, age, gender, region, work, isMakeMecicine, nameWithValue, trustFrequency, istoTrust, isForget, buyMedicineFrequency, medicineRegion, reason, focus, isActive, channel from test_table
+    </sql>
+
+    <select id="selectTestTableList" resultMap="TestTableResult">
+        <include refid="selectTestTableVo"/>
+    </select>
+    
+    <select id="selectTestTableById" parameterType="Long" resultMap="TestTableResult">
+        <include refid="selectTestTableVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTestTable" parameterType="TestTable" useGeneratedKeys="true" keyProperty="id">
+        insert into test_table
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="region != null">region,</if>
+            <if test="work != null">work,</if>
+            <if test="isMakeMecicine != null">isMakeMecicine,</if>
+            <if test="nameWithValue != null">nameWithValue,</if>
+            <if test="trustFrequency != null">trustFrequency,</if>
+            <if test="istoTrust != null">istoTrust,</if>
+            <if test="isForget != null">isForget,</if>
+            <if test="buyMedicineFrequency != null">buyMedicineFrequency,</if>
+            <if test="medicineRegion != null">medicineRegion,</if>
+            <if test="reason != null">reason,</if>
+            <if test="focus != null">focus,</if>
+            <if test="isActive != null">isActive,</if>
+            <if test="channel != null">channel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="region != null">#{region},</if>
+            <if test="work != null">#{work},</if>
+            <if test="isMakeMecicine != null">#{isMakeMecicine},</if>
+            <if test="nameWithValue != null">#{nameWithValue},</if>
+            <if test="trustFrequency != null">#{trustFrequency},</if>
+            <if test="istoTrust != null">#{istoTrust},</if>
+            <if test="isForget != null">#{isForget},</if>
+            <if test="buyMedicineFrequency != null">#{buyMedicineFrequency},</if>
+            <if test="medicineRegion != null">#{medicineRegion},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="focus != null">#{focus},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="channel != null">#{channel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTestTable" parameterType="TestTable">
+        update test_table
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="region != null">region = #{region},</if>
+            <if test="work != null">work = #{work},</if>
+            <if test="isMakeMecicine != null">isMakeMecicine = #{isMakeMecicine},</if>
+            <if test="nameWithValue != null">nameWithValue = #{nameWithValue},</if>
+            <if test="trustFrequency != null">trustFrequency = #{trustFrequency},</if>
+            <if test="istoTrust != null">istoTrust = #{istoTrust},</if>
+            <if test="isForget != null">isForget = #{isForget},</if>
+            <if test="buyMedicineFrequency != null">buyMedicineFrequency = #{buyMedicineFrequency},</if>
+            <if test="medicineRegion != null">medicineRegion = #{medicineRegion},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="focus != null">focus = #{focus},</if>
+            <if test="isActive != null">isActive = #{isActive},</if>
+            <if test="channel != null">channel = #{channel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestTableById" parameterType="Long">
+        delete from test_table where id = #{id}
+    </delete>
+
+    <delete id="deleteTestTableByIds" parameterType="String">
+        delete from test_table where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

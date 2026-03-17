@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRehbVideoMapper">
+    
+    <resultMap type="SysRehbVideo" id="SysRehbVideoResult">
+        <result property="videoId"    column="video_id"    />
+        <result property="videoType"    column="video_type"    />
+        <result property="videoName"    column="video_name"    />
+        <result property="videoUrl"    column="video_url"    />
+        <result property="videoCollect"    column="video_collect"    />
+        <result property="videoIntroduction"    column="video_introduction"    />
+        <result property="videoCover"    column="video_cover"    />
+    </resultMap>
+
+    <sql id="selectSysRehbVideoVo">
+        select video_id, video_type, video_name, video_url, video_collect,video_introduction, video_cover from sys_rehb_video
+    </sql>
+
+    <select id="selectSysRehbVideoList" parameterType="SysRehbVideo" resultMap="SysRehbVideoResult">
+        <include refid="selectSysRehbVideoVo"/>
+        <where>  
+            <if test="videoType != null  and videoType != ''"> and video_type = #{videoType}</if>
+            <if test="videoName != null  and videoName != ''"> and video_name like concat('%', #{videoName}, '%')</if>
+            <if test="videoUrl != null  and videoUrl != ''"> and video_url = #{videoUrl}</if>
+            <if test="videoCollect != null "> and video_collect &gt;= #{videoCollect}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysRehbVideoByVideoId" parameterType="Long" resultMap="SysRehbVideoResult">
+        <include refid="selectSysRehbVideoVo"/>
+        where video_id = #{videoId}
+    </select>
+    <select id="CountWithcollect" resultMap="SysRehbVideoResult">
+        <include refid="selectSysRehbVideoVo"/>
+        ORDER BY video_collect DESC
+        LIMIT 10;
+    </select>
+
+    <insert id="insertSysRehbVideo" parameterType="SysRehbVideo" useGeneratedKeys="true" keyProperty="videoId">
+        insert into sys_rehb_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="videoType != null and videoType != ''">video_type,</if>
+            <if test="videoName != null and videoName != ''">video_name,</if>
+            <if test="videoUrl != null and videoUrl != ''">video_url,</if>
+            <if test="videoCollect != null">video_collect,</if>
+            <if test="videoIntroduction != null">video_introduction,</if>
+            <if test="videoCover != null">video_cover,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="videoType != null and videoType != ''">#{videoType},</if>
+            <if test="videoName != null and videoName != ''">#{videoName},</if>
+            <if test="videoUrl != null and videoUrl != ''">#{videoUrl},</if>
+            <if test="videoCollect != null">#{videoCollect},</if>
+            <if test="videoIntroduction != null">#{videoIntroduction},</if>
+            <if test="videoCover != null">#{videoCover},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysRehbVideo" parameterType="SysRehbVideo">
+        update sys_rehb_video
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="videoType != null and videoType != ''">video_type = #{videoType},</if>
+            <if test="videoName != null and videoName != ''">video_name = #{videoName},</if>
+            <if test="videoUrl != null and videoUrl != ''">video_url = #{videoUrl},</if>
+            <if test="videoCollect != null">video_collect = #{videoCollect},</if>
+            <if test="videoIntroduction != null">video_introduction = #{videoIntroduction},</if>
+            <if test="videoCover != null">video_cover = #{videoCover},</if>
+        </trim>
+        where video_id = #{videoId}
+    </update>
+
+    <delete id="deleteSysRehbVideoByVideoId" parameterType="Long">
+        delete from sys_rehb_video where video_id = #{videoId}
+    </delete>
+
+    <delete id="deleteSysRehbVideoByVideoIds" parameterType="String">
+        delete from sys_rehb_video where video_id in 
+        <foreach item="videoId" collection="array" open="(" separator="," close=")">
+            #{videoId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysArticleFavoriteMapper">
+    
+    <resultMap type="SysArticleFavorite" id="SysArticleFavoriteResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="articleId"    column="article_id"    />
+    </resultMap>
+
+    <sql id="selectSysArticleFavoriteVo">
+        select id, user_id, article_id from sys_article_favorite
+    </sql>
+    
+    <select id="selectSysArticleFavoriteByUserId" parameterType="Long" resultMap="SysArticleFavoriteResult">
+        <include refid="selectSysArticleFavoriteVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectSysArticleFavoriteByArticleId" parameterType="Long" resultMap="SysArticleFavoriteResult">
+        <include refid="selectSysArticleFavoriteVo"/>
+        where article_id = #{articleId}
+    </select>
+        
+    <insert id="insertSysArticleFavorite" parameterType="SysArticleFavorite" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_article_favorite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="articleId != null">article_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="articleId != null">#{articleId},</if>
+         </trim>
+    </insert>
+
+
+    <delete id="deleteSysArticleFavoriteById" parameterType="Long">
+        delete from sys_article_favorite where id = #{id}
+    </delete>
+</mapper>

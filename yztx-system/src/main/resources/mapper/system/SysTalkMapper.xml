@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTalkMapper">
+    
+    <resultMap type="SysTalk" id="SysTalkResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="title"    column="title"    />
+        <result property="introduction"    column="introduction"    />
+        <result property="homePage"    column="home_page"    />
+        <result property="imageText"    column="image_text"    />
+        <result property="status"    column="status"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysTalkVo">
+        select id, type, title, introduction, home_page, image_text, status, update_time from sys_talk
+    </sql>
+
+    <select id="selectSysTalkList" parameterType="SysTalk" resultMap="SysTalkResult">
+        <include refid="selectSysTalkVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type like concat('%', #{type}, '%')</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTalkById" parameterType="Long" resultMap="SysTalkResult">
+        <include refid="selectSysTalkVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysTalk" parameterType="SysTalk" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_talk
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="title != null">title,</if>
+            <if test="introduction != null">introduction,</if>
+            <if test="homePage != null">home_page,</if>
+            <if test="imageText != null">image_text,</if>
+            <if test="status != null">status,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="title != null">#{title},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="homePage != null">#{homePage},</if>
+            <if test="imageText != null">#{imageText},</if>
+            <if test="status != null">#{status},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysTalk" parameterType="SysTalk">
+        update sys_talk
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="homePage != null">home_page = #{homePage},</if>
+            <if test="imageText != null">image_text = #{imageText},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTalkById" parameterType="Long">
+        delete from sys_talk where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTalkByIds" parameterType="String">
+        delete from sys_talk where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
